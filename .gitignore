@@ -1,0 +1,8 @@
+bin/
+.idea
+tmp/
+go.sum
+dist
+.envrc
+.env
+
