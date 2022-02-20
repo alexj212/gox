@@ -3,6 +3,7 @@ module gox
 go 1.17
 
 require (
+	github.com/droundy/goopt v0.0.0-20220217183150-48d6390ad4d1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/gorilla/mux v1.8.0
 	github.com/pkg/errors v0.9.1
@@ -11,8 +12,6 @@ require (
 )
 
 require (
-	github.com/droundy/goopt v0.0.0-20170604162106-0b8effe182da // indirect
-	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect

@@ -16,11 +16,12 @@ endif
 
 export COMMIT_CNT := $(shell git rev-list HEAD | wc -l | sed 's/ //g' )
 export BUILD_NUMBER := ${BRANCH}-${COMMIT_CNT}
-export COMPILE_LDFLAGS=-s -X "main.DATE=${DATE}" \
-                          -X "main.LATEST_COMMIT=${LATEST_COMMIT}" \
-                          -X "main.BUILD_NUMBER=${BUILD_NUMBER}" \
-                          -X "main.BUILT_ON_IP=${BUILT_ON_IP}" \
-                          -X "main.BUILT_ON_OS=${BUILT_ON_OS}"
+
+export COMPILE_LDFLAGS=-s -X "main.BuildDate=${DATE}" \
+                          -X "main.LatestCommit=${LATEST_COMMIT}" \
+                          -X "main.BuildNumber=${BUILD_NUMBER}" \
+                          -X "main.BuiltOnIp=${BUILT_ON_IP}" \
+                          -X "main.BuiltOnOs=${BUILT_ON_OS}"
 
 
 
