@@ -1,4 +1,4 @@
-module gox
+module github.com/alexj212/gox
 
 go 1.17
 
