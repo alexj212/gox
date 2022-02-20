@@ -1,5 +1,5 @@
 export PROJ_PATH=github.com/alexj212/gox
-export PROJ_PATH=gox
+
 
 
 export DATE := $(shell date +%Y.%m.%d-%H%M)
@@ -143,9 +143,9 @@ add_prerequisites: add_global_libs ## add all prerequisites
 ##
 ####################################################################################################################
 
-all: mitm test ## build binaries in bin dir and run tests
+all: proxy test ## build binaries in bin dir and run tests
 
-binaries: mitm ## build binaries in bin dir
+binaries: proxy ## build binaries in bin dir
 
 create_dir:
 	@mkdir -p $(BIN_DIR)
@@ -184,5 +184,7 @@ clean_binary: ## clean binary in bin dir
 clean_proxy: ## clean proxy
 	make BIN_NAME=proxy clean_binary
 	@rm -rf $(BIN_DIR)
+
+
 
 
