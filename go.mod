@@ -1,18 +1,18 @@
 module github.com/alexj212/gox
 
-go 1.17
+go 1.18
 
 require (
 	github.com/droundy/goopt v0.0.0-20220217183150-48d6390ad4d1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/gorilla/mux v1.8.0
+	github.com/matryer/is v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/potakhov/loge v0.2.0
 	gopkg.in/olahol/melody.v1 v1.0.0-20170518105555-d52139073376
 )
 
 require (
-	github.com/gin-contrib/cors v1.3.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect

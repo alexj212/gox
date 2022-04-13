@@ -6,6 +6,7 @@ import (
     "io/ioutil"
     "log"
     "os"
+    "path/filepath"
     "strings"
 )
 
@@ -23,7 +24,7 @@ func HandleHistory() (exitApp bool, err error) {
             fmt.Printf("Command has never been run\nUsage:\n%s\n", usage)
             return true, nil
         }
-        fmt.Printf("Showing history for command: %s\n", os.Args[0])
+        fmt.Printf("Showing history for command: %s\n", GetAppName())
         fmt.Printf("\n%s\b", string(historyBytes))
         return true, nil
     }
@@ -32,11 +33,22 @@ func HandleHistory() (exitApp bool, err error) {
     return false, nil
 }
 
+// GetAppName return name of executable sans path
+func GetAppName() (appName string) {
+    _, appName = filepath.Split(os.Args[0])
+    return
+}
+
+// GetHistoryFileName return name of history file
+func GetHistoryFileName() (historyFileName string) {
+    dirname, _ := os.UserHomeDir()
+    historyFileName = filepath.Join(dirname, fmt.Sprintf(".%s.history", GetAppName()))
+    return
+}
+
 // GetHistoryFile read history file to []byte.
 func GetHistoryFile() ([]byte, error) {
-    dirname, _ := os.UserHomeDir()
-    historyFileName := fmt.Sprintf("%s/.%s.history", dirname, os.Args[0])
-
+    historyFileName := GetHistoryFileName()
     exists := FileExists(historyFileName)
     if exists {
         f, err := ioutil.ReadFile(historyFileName)
@@ -51,9 +63,7 @@ func GetHistoryFile() ([]byte, error) {
 }
 
 func appendHistory() {
-    dirname, _ := os.UserHomeDir()
-    historyFileName := fmt.Sprintf("%s/.%s.history", dirname, os.Args[0])
-
+    historyFileName := GetHistoryFileName()
     fullCmdLine := strings.Join(os.Args, " ")
 
     historyBytes, err := GetHistoryFile()
@@ -78,4 +88,10 @@ func appendHistory() {
     if _, err = f.WriteString(fullCmdLine + "\n"); err != nil {
         log.Printf("Error writing to  history file: %s error: %v\n", historyFileName, err)
     }
+}
+
+// GetDefaultLogDir return default log dir for the app
+func GetDefaultLogDir() (logDir string) {
+    logDir = filepath.Join(os.TempDir(), GetAppName())
+    return
 }
