@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// ProxyOverride struct
 type ProxyOverride struct {
 	Header           string
 	Match            string
@@ -18,6 +19,7 @@ type ProxyOverride struct {
 	ResponseModifier BytesModifier
 }
 
+// ProxyConfig struct
 type ProxyConfig struct {
 	Path     string
 	Host     string
@@ -25,6 +27,7 @@ type ProxyConfig struct {
 	Override ProxyOverride
 }
 
+// GenerateProxy generate proxy
 func GenerateProxy(conf ProxyConfig) http.Handler {
 	proxy := &httputil.ReverseProxy{Director: func(req *http.Request) {
 		originHost := conf.Host
@@ -53,8 +56,10 @@ func GenerateProxy(conf ProxyConfig) http.Handler {
 	return proxy
 }
 
+// BytesModifier func type proxy
 type BytesModifier func([]byte) []byte
 
+// BodyRewriter func type proxy
 func BodyRewriter(bytesModifier BytesModifier) (handler func(resp *http.Response) (err error)) {
 	return func(resp *http.Response) (err error) {
 

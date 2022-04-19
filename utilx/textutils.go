@@ -18,10 +18,12 @@ var templateFuncs = template.FuncMap{
 	"stringInSlice":           StringInSlice,
 }
 
+// TrimRightSpace remove right space
 func TrimRightSpace(s string) string {
 	return strings.TrimRightFunc(s, unicode.IsSpace)
 }
 
+// PadSpaceAfter add space pad to end
 func PadSpaceAfter(s string) string {
 	if s == "" {
 		return ""
@@ -89,6 +91,7 @@ func LD(s, t string, ignoreCase bool) int {
 	return d[len(s)][len(t)]
 }
 
+// StringInSlice returns if a string is in a slice
 func StringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {

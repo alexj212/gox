@@ -59,6 +59,7 @@ func SetupFS(defaultFS fs.FS, webDir string, compareFS bool) (fs.FS, error) {
 
 }
 
+// WalkDir print info
 func WalkDir(root fs.FS, fsType string) (err error) {
 
 	if root == nil {

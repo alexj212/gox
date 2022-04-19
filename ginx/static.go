@@ -11,8 +11,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// INDEX main index page
 const INDEX = "index.html"
 
+// ServeFileSystem fs interface
 type ServeFileSystem interface {
 	http.FileSystem
 	Exists(prefix string, path string) bool
@@ -24,6 +26,7 @@ type localFileSystem struct {
 	indexes bool
 }
 
+// LocalFile return a local file system
 func LocalFile(root string, indexes bool) *localFileSystem {
 	return &localFileSystem{
 		FileSystem: gin.Dir(root, indexes),
@@ -32,6 +35,7 @@ func LocalFile(root string, indexes bool) *localFileSystem {
 	}
 }
 
+// Exists check prefix, filepath exists on localFileSystem
 func (l *localFileSystem) Exists(prefix string, filepath string) bool {
 	if p := strings.TrimPrefix(filepath, prefix); len(p) < len(filepath) {
 		fmt.Printf("Exists prefix: %v filepath: %v true \n", prefix, filepath)
@@ -89,6 +93,7 @@ type staticFileSystem struct {
 	indexes        bool
 }
 
+// StaticFS static fs
 func StaticFS(fileSystem fs.FS, root string, indexes bool) *staticFileSystem {
 	httpFS := http.FS(fileSystem)
 
@@ -114,6 +119,7 @@ func (l *staticFileSystem) Open(name string) (http.File, error) {
 	//return nil, errors.Errorf("unable to find %v", name)
 }
 
+// Exists check prefix, filepath exists on staticFileSystem
 func (l *staticFileSystem) Exists(prefix string, filepath string) bool {
 	fmt.Printf("Exists prefix: %v filepath: %v \n", prefix, filepath)
 	if p := strings.TrimPrefix(filepath, prefix); len(p) < len(filepath) {
