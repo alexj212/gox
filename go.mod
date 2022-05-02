@@ -10,7 +10,7 @@ require (
 	github.com/matryer/is v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/potakhov/loge v0.2.0
-	golang.org/x/crypto v0.0.0-20210616213533-5ff15b29337e
+	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f
 	gopkg.in/olahol/melody.v1 v1.0.0-20170518105555-d52139073376
 )
 
@@ -47,8 +47,8 @@ require (
 	github.com/tj/go-spin v1.1.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	golang.org/x/image v0.0.0-20191206065243-da761ea9ff43 // indirect
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
-	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
+	golang.org/x/sys v0.0.0-20220502124256-b6088ccd6cba // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
