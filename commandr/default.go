@@ -1,9 +1,9 @@
 package commandr
 
 import (
-    "bufio"
-    "bytes"
-    "github.com/fatih/color"
+	"bufio"
+	"bytes"
+	"github.com/fatih/color"
 )
 
 // DefaultCommands main struct for all commands
@@ -22,60 +22,60 @@ var ClsCommand = &Command{Use: "cls", Exec: clsCommand, Short: "send cls event t
 var ExitCommand = &Command{Use: "exit", Exec: exitCommand, Short: "exit the session", ExecLevel: All}
 
 func init() {
-    DefaultCommands.AddCommand(HistoryCommand)
-    DefaultCommands.AddCommand(UserCommand)
-    DefaultCommands.AddCommand(ClsCommand)
-    DefaultCommands.AddCommand(ExitCommand)
-    return
+	DefaultCommands.AddCommand(HistoryCommand)
+	DefaultCommands.AddCommand(UserCommand)
+	DefaultCommands.AddCommand(ClsCommand)
+	DefaultCommands.AddCommand(ExitCommand)
+	return
 }
 
 // HandleCommands handler function to execute commands
 func HandleCommands(Commands *Command) (handler func(Client, string)) {
 
-    handler = func(client Client, cmdLine string) {
-        // loge.Info("handleMessage  - authenticated user message.Payload: [" + cmd+"]")
+	handler = func(client Client, cmdLine string) {
+		// loge.Info("handleMessage  - authenticated user message.Payload: [" + cmd+"]")
 
-        var b bytes.Buffer
-        writer := bufio.NewWriter(&b)
+		var b bytes.Buffer
+		writer := bufio.NewWriter(&b)
 
-        parsed, err := NewCommandArgs(cmdLine, writer)
+		parsed, err := NewCommandArgs(cmdLine, writer)
 
-        if err != nil {
-            client.Write([]byte(color.RedString("Error parsing command: %v\n", err)))
-            return
-        }
-        Commands.Execute(client, parsed)
-        writer.Flush()
-        result := b.String()
-        client.Write([]byte(color.WhiteString(result)))
-    }
-    return
+		if err != nil {
+			client.Write([]byte(color.RedString("Error parsing command: %v\n", err)))
+			return
+		}
+		Commands.Execute(client, parsed)
+		writer.Flush()
+		result := b.String()
+		client.Write([]byte(color.WhiteString(result)))
+	}
+	return
 }
 
 func displayUserInfo(client Client, args *CommandArgs) (err error) {
-    client.Write([]byte(color.GreenString("Username       : %v / %v\n", client.UserName(), client.ExecLevel())))
-    return
+	client.Write([]byte(color.GreenString("Username       : %v / %v\n", client.UserName(), client.ExecLevel())))
+	return
 }
 
 func displayHistory(client Client, args *CommandArgs) (err error) {
-    if len(client.History()) > 0 {
-        for i, cmd := range client.History() {
-            client.Write([]byte(color.GreenString("History[%d]: %v\n", i, cmd)))
-        }
-    } else {
-        client.Write([]byte(color.GreenString("History is empty\n")))
-    }
-    return
+	if len(client.History()) > 0 {
+		for i, cmd := range client.History() {
+			client.Write([]byte(color.GreenString("History[%d]: %v\n", i, cmd)))
+		}
+	} else {
+		client.Write([]byte(color.GreenString("History is empty\n")))
+	}
+	return
 }
 
 func exitCommand(client Client, args *CommandArgs) (err error) {
-    client.Write([]byte(color.GreenString("Bye bye 👋\n")))
-    client.Close()
-    return
+	client.Write([]byte(color.GreenString("Bye bye 👋\n")))
+	client.Close()
+	return
 }
 
 func clsCommand(client Client, args *CommandArgs) (err error) {
-    client.Write([]byte("\033c"))
-    client.Close()
-    return
+	client.Write([]byte("\033c"))
+	client.Close()
+	return
 }
