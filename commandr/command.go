@@ -13,10 +13,21 @@ import (
 // Client interface of clients
 type Client interface {
 	io.Writer
+
+	//Close interface func implementation to close client down
 	Close()
+
+	//ExecLevel interface func implementation to return client exec level
 	ExecLevel() ExecLevel
+
+	//History interface func implementation to return client command history
 	History() []string
+
+	//UserName interface func implementation to return client user name
 	UserName() string
+
+	//WriteString interface func implementation to write string to clients stream
+	WriteString(p string)
 }
 
 // CommandFunc function definition for a command

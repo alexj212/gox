@@ -18,24 +18,34 @@ type sshClient struct {
 	history []string
 }
 
+//Close interface func implementation to close client down
 func (s *sshClient) Close() {
-	s.s.Close()
+	_ = s.s.Close()
 }
 
+//ExecLevel interface func implementation to return client exec level
 func (s *sshClient) ExecLevel() ExecLevel {
 	return s.user.level
 }
 
+//UserName interface func implementation to return client user name
 func (s *sshClient) UserName() string {
 	return s.s.User()
 }
 
+//History interface func implementation to return client command history
 func (s *sshClient) History() []string {
 	return s.history
 }
 
+//Write interface func implementation to write to clients stream
 func (s *sshClient) Write(p []byte) (n int, err error) {
 	return s.s.Write(p)
+}
+
+//WriteString interface func implementation to write string to clients stream
+func (s *sshClient) WriteString(p string) {
+	_, _ = s.Write([]byte(p))
 }
 
 func (svc *sshService) publicKeyValidator(ctx ssh.Context, key ssh.PublicKey) bool {
@@ -74,7 +84,7 @@ func (svc *sshService) sshSessionHandler(s ssh.Session) {
 	//
 
 	authorizedKey := gossh.MarshalAuthorizedKey(s.PublicKey())
-	io.WriteString(s, fmt.Sprintf("public key used by %s    key: %s\n", s.User(), string(authorizedKey)))
+	c.WriteString(fmt.Sprintf("public key used by %s    key: %s\n", s.User(), string(authorizedKey)))
 
 	term := terminal.NewTerminal(s, "> ")
 	line := ""
@@ -141,17 +151,21 @@ type sshUser struct {
 
 // SshService interface of ssh service
 type SshService interface {
-	Close()
+	// Close shut down ssh service
+	Close() error
+	// Spawn start new go routine serving ssh
 	Spawn()
+	// RegisterUser register a user on the system
 	RegisterUser(user string, level ExecLevel, keys []string)
+	// LookupUser lookup a user by name
 	LookupUser(username string) (user *sshUser, ok bool)
-
+	// AddCommand add commands to be executed
 	AddCommand(cmds ...*Command)
 }
 
-// Close close down ssh service
-func (svc *sshService) Close() {
-	svc.s.Close()
+// Close shut down ssh service
+func (svc *sshService) Close() error {
+	return svc.s.Close()
 }
 
 // Spawn start new go routine serving ssh

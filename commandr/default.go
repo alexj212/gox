@@ -10,20 +10,20 @@ import (
 var DefaultCommands = &Command{ExecLevel: All}
 
 // HistoryCommand command to view history of commands executed
-var HistoryCommand = &Command{Use: "history", Exec: displayHistory, Short: "Show the history of commands executed", ExecLevel: All}
+var HistoryCommand = &Command{Use: "history", Exec: historyCmd, Short: "Show the history of commands executed", ExecLevel: All}
 
-// UserCommand command to view user details
-var UserCommand = &Command{Use: "user", Exec: displayUserInfo, Short: "Show user details about logged in user", ExecLevel: All}
+// WhoamiCommand command to view user details
+var WhoamiCommand = &Command{Use: "whoami", Exec: whoamiCmd, Short: "Show user details about logged in user", ExecLevel: All}
 
 // ClsCommand command to clear web screen
-var ClsCommand = &Command{Use: "cls", Exec: clsCommand, Short: "send cls event to terminal client", ExecLevel: All}
+var ClsCommand = &Command{Use: "cls", Exec: clsCmd, Short: "send cls event to terminal client", ExecLevel: All}
 
 // ExitCommand command to exit
-var ExitCommand = &Command{Use: "exit", Exec: exitCommand, Short: "exit the session", ExecLevel: All}
+var ExitCommand = &Command{Use: "exit", Exec: exitCmd, Short: "exit the session", ExecLevel: All}
 
 func init() {
 	DefaultCommands.AddCommand(HistoryCommand)
-	DefaultCommands.AddCommand(UserCommand)
+	DefaultCommands.AddCommand(WhoamiCommand)
 	DefaultCommands.AddCommand(ClsCommand)
 	DefaultCommands.AddCommand(ExitCommand)
 	return
@@ -41,41 +41,40 @@ func HandleCommands(Commands *Command) (handler func(Client, string)) {
 		parsed, err := NewCommandArgs(cmdLine, writer)
 
 		if err != nil {
-			client.Write([]byte(color.RedString("Error parsing command: %v\n", err)))
+			client.WriteString(color.RedString("Error parsing command: %v\n", err))
 			return
 		}
 		Commands.Execute(client, parsed)
-		writer.Flush()
+		_ = writer.Flush()
 		result := b.String()
-		client.Write([]byte(color.WhiteString(result)))
+		client.WriteString(color.WhiteString(result))
 	}
 	return
 }
 
-func displayUserInfo(client Client, args *CommandArgs) (err error) {
-	client.Write([]byte(color.GreenString("Username       : %v / %v\n", client.UserName(), client.ExecLevel())))
+func whoamiCmd(client Client, _ *CommandArgs) (err error) {
+	client.WriteString(color.GreenString("whoami  username: %v  exec level: %v\n", client.UserName(), client.ExecLevel()))
 	return
 }
 
-func displayHistory(client Client, args *CommandArgs) (err error) {
+func historyCmd(client Client, _ *CommandArgs) (err error) {
 	if len(client.History()) > 0 {
 		for i, cmd := range client.History() {
-			client.Write([]byte(color.GreenString("History[%d]: %v\n", i, cmd)))
+			client.WriteString(color.GreenString("History[%d]: %v\n", i, cmd))
 		}
 	} else {
-		client.Write([]byte(color.GreenString("History is empty\n")))
+		client.WriteString(color.GreenString("History is empty\n"))
 	}
 	return
 }
 
-func exitCommand(client Client, args *CommandArgs) (err error) {
-	client.Write([]byte(color.GreenString("Bye bye 👋\n")))
+func exitCmd(client Client, _ *CommandArgs) (err error) {
+	client.WriteString(color.GreenString("Bye bye 👋\n"))
 	client.Close()
 	return
 }
 
-func clsCommand(client Client, args *CommandArgs) (err error) {
-	client.Write([]byte("\033c"))
-	client.Close()
+func clsCmd(client Client, _ *CommandArgs) (err error) {
+	client.WriteString("\033c")
 	return
 }
