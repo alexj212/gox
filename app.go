@@ -42,7 +42,7 @@ func HandleHistory() (exitApp bool, err error) {
             return true, nil
         }
         fmt.Printf("Showing history for command: %s\n", GetAppName())
-        fmt.Printf("\n%s\b", string(historyBytes))
+        fmt.Printf("\n%s\n", string(historyBytes))
         return true, nil
     }
 

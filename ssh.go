@@ -5,7 +5,6 @@ import (
     "crypto/rsa"
     "crypto/x509"
     "encoding/pem"
-    "fmt"
     "io/ioutil"
     "log"
 
@@ -13,14 +12,14 @@ import (
 )
 
 // LoadAuthorizedKeys load keys from authorized_keys file and puts the marshalled public key into the map as the key.
-func LoadAuthorizedKeys(authorizedKeyFile string) (map[string]bool, error) {
+func LoadAuthorizedKeys(authorizedKeyFile string) ([]string, error) {
     authorizedKeysBytes, err := ioutil.ReadFile(authorizedKeyFile)
     if err != nil {
         log.Printf("Failed to load authorized_keys, err: %v", err)
         return nil, err
     }
 
-    authorizedKeysMap := map[string]bool{}
+    authorizedKeys := make([]string, 0)
     for len(authorizedKeysBytes) > 0 {
         pubKey, _, _, rest, err := ssh.ParseAuthorizedKey(authorizedKeysBytes)
         if err != nil {
@@ -28,12 +27,12 @@ func LoadAuthorizedKeys(authorizedKeyFile string) (map[string]bool, error) {
             return nil, err
         }
 
-        authorizedKeysMap[string(pubKey.Marshal())] = true
+        authorizedKeys = append(authorizedKeys, string(pubKey.Marshal()))
         authorizedKeysBytes = rest
-        fmt.Printf("authorizedKeysMap add key type: %v\n", pubKey.Type())
+        // fmt.Printf("authorizedKeysMap add key type: %v\n", pubKey.Type())
     }
 
-    return authorizedKeysMap, err
+    return authorizedKeys, err
 }
 
 // GeneratePrivateKey creates a RSA Private Key of specified byte size
