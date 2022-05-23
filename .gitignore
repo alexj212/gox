@@ -1,8 +1,11 @@
-bin/
+.DS_Store
 .idea
-tmp/
-go.sum
-dist
 .envrc
 .env
-
+go.work
+go.work.sum
+go.sum
+bin/
+dist/
+tmp/
+venv/
