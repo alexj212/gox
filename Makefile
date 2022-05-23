@@ -143,7 +143,7 @@ add_prerequisites: add_global_libs ## add all prerequisites
 ##
 ####################################################################################################################
 
-all: proxy test ## build binaries in bin dir and run tests
+all: proxy test events commandrtest ## build binaries in bin dir and run tests
 
 binaries: proxy ## build binaries in bin dir
 
@@ -165,7 +165,21 @@ build_app: create_dir
 
 proxy: build_info ## build proxy binary in bin dir
 	@echo "build proxy"
-	make BIN_NAME=proxy APP_PATH=$(PROJ_PATH)/_examples/proxy build_app
+	@cd  _examples/proxy
+	make BIN_NAME=proxy APP_PATH=. build_app
+	@echo ''
+	@echo ''
+
+events: build_info ## build proxy binary in bin dir
+	@echo "build proxy"
+	@cd  _examples/events
+	make BIN_NAME=events APP_PATH=. build_app
+	@echo ''
+	@echo ''
+commandrtest: build_info ## build proxy binary in bin dir
+	@echo "build proxy"
+	@cd  _examples/commandrtest
+	make BIN_NAME=commandrtest APP_PATH=. build_app
 	@echo ''
 	@echo ''
 
