@@ -14,7 +14,7 @@ require (
 	github.com/matryer/is v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/potakhov/loge v0.2.0
-	golang.org/x/crypto v0.0.0-20220518034528-6f7dac969898
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
 	gopkg.in/olahol/melody.v1 v1.0.0-20170518105555-d52139073376

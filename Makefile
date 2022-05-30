@@ -116,13 +116,10 @@ add_global_binary: ##add dependency to global bin
 
 
 add_global_libs: ## add global libs
-	@make --no-print-directory MODULE_DIR=github.com/gogo/protobuf            	add_global_module
 	@make --no-print-directory MODULE_DIR=github.com/golang/protobuf           	add_global_module
 	@make --no-print-directory MODULE_DIR=github.com/grpc-ecosystem/grpc-gateway add_global_module
 	@make --no-print-directory MODULE_DIR=github.com/mwitkow/go-proto-validators add_global_module
 
-	@make --no-print-directory BINARY_URL=github.com/gogo/protobuf/protoc-gen-gofast	 				 BINARY=protoc-gen-gofast		add_global_binary
-	@make --no-print-directory BINARY_URL=github.com/gogo/protobuf/protoc-gen-gogo	 					 BINARY=protoc-gen-gogo			add_global_binary
 	@make --no-print-directory BINARY_URL=github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway BINARY=protoc-gen-grpc-gateway	add_global_binary
 	@make --no-print-directory BINARY_URL=github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger	 	 BINARY=protoc-gen-swagger		add_global_binary
 	@make --no-print-directory BINARY_URL=github.com/mwitkow/go-proto-validators/protoc-gen-govalidators BINARY=protoc-gen-govalidators	add_global_binary
