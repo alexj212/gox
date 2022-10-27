@@ -118,7 +118,7 @@ func (svc *sshService) sshSessionHandler(s ssh.Session) {
     for {
         line, err := term.ReadLine()
         if err != nil {
-            fmt.Printf("SSH ReadLine err: %v\n", err)
+            // EOF error on disconnect
             break
         }
 

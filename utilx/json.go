@@ -4,7 +4,8 @@ import (
     "encoding/json"
     "fmt"
     "github.com/alexj212/gox"
-    "io/ioutil"
+    "io"
+    "os"
     "strconv"
     "time"
 )
@@ -79,7 +80,7 @@ func LoadJson[T any](f string, v *T) (*T, error) {
 
     exists := gox.FileExists(f)
     if exists {
-        d, err := ioutil.ReadFile(f)
+        d, err := os.ReadFile(f)
         if err != nil {
             return nil, err
         }
@@ -94,6 +95,22 @@ func LoadJson[T any](f string, v *T) (*T, error) {
     return v, nil
 }
 
+// ReadJson json from reader -
+func ReadJson[T any](r io.Reader, _ *T) (val *T, err error) {
+
+    body, err := io.ReadAll(r)
+    if err != nil {
+        return
+    }
+
+    err = json.Unmarshal(body, val)
+    if err != nil {
+        return
+    }
+
+    return val, nil
+}
+
 // SaveJson write json from val
 func SaveJson[T any](f string, v *T) error {
 
@@ -102,5 +119,5 @@ func SaveJson[T any](f string, v *T) error {
         return err
     }
 
-    return ioutil.WriteFile(f, payload, 0644)
+    return os.WriteFile(f, payload, 0644)
 }
