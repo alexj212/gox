@@ -31,16 +31,25 @@ func LoadAuthorizedKeys(authorizedKeyFile string) ([]*SshKey, error) {
     authorizedKeysBytes, err := ioutil.ReadFile(authorizedKeyFile)
     if err != nil {
         loge.Printf("Failed to load authorized_keys, err: %v", err)
+        fmt.Printf("Failed to load authorized_keys, err: %v", err)
         return nil, err
     }
 
     authorizedKeys := make([]*SshKey, 0)
     for len(authorizedKeysBytes) > 0 {
-
+        //fmt.Printf("authorizedKeysBytes: %d\n", len(authorizedKeysBytes))
         pubKey, comment, options, rest, err := ssh.ParseAuthorizedKey(authorizedKeysBytes)
-        if err != nil {
-            loge.Printf("tes1: %v\n", err)
-            return nil, err
+
+        //fmt.Printf("pubKey: %v\n", pubKey)
+        //fmt.Printf("comment: %v\n", comment)
+        //fmt.Printf("options: %v\n", options)
+        //fmt.Printf("rest: %v\n", string(rest))
+        //fmt.Printf("err: %v\n", err)
+
+        if err != nil && len(rest) == 0 {
+            //fmt.Printf("tes1: %v\n", err)
+            break
+            //return nil, err
         }
 
         key := &SshKey{
