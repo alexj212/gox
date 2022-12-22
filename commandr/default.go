@@ -52,12 +52,12 @@ func HandleCommands(Commands *Command) (handler func(Client, string)) {
 	return
 }
 
-func whoamiCmd(client Client, _ *CommandArgs) (err error) {
+func whoamiCmd(client Client, cmd *Command, _ *CommandArgs) (err error) {
 	client.WriteString(color.GreenString("whoami  username: %v  exec level: %v\n", client.UserName(), client.ExecLevel()))
 	return
 }
 
-func historyCmd(client Client, _ *CommandArgs) (err error) {
+func historyCmd(client Client, cmd *Command, _ *CommandArgs) (err error) {
 	if len(client.History()) > 0 {
 		for i, cmd := range client.History() {
 			client.WriteString(color.GreenString("History[%d]: %v\n", i, cmd))
@@ -68,13 +68,13 @@ func historyCmd(client Client, _ *CommandArgs) (err error) {
 	return
 }
 
-func exitCmd(client Client, _ *CommandArgs) (err error) {
+func exitCmd(client Client, cmd *Command, _ *CommandArgs) (err error) {
 	client.WriteString(color.GreenString("Bye bye 👋\n"))
 	client.Close()
 	return
 }
 
-func clsCmd(client Client, _ *CommandArgs) (err error) {
+func clsCmd(client Client, cmd *Command, _ *CommandArgs) (err error) {
 	client.WriteString("\033c")
 	return
 }

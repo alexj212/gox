@@ -142,9 +142,6 @@ func (svc *sshService) sshSessionHandler(s ssh.Session) {
 		}
 
 		if execErr != nil {
-			term.Write([]byte(fmt.Sprintf("Error: %v\n", execErr)))
-			//msg := fmt.Sprintf("Error Stack\n%v\n", errors.Wrap(execErr, 2).ErrorStack())
-			//term.Write([]byte(msg))
 			continue
 		}
 

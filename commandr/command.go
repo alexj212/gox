@@ -32,7 +32,7 @@ type Client interface {
 }
 
 // CommandFunc function definition for a command
-type CommandFunc func(client Client, args *CommandArgs) error
+type CommandFunc func(client Client, cmd *Command, args *CommandArgs) error
 
 // ExecLevel type for admin levels
 type ExecLevel int32
@@ -572,6 +572,7 @@ func (c *Command) IsSubCommandAvailable(client Client, cmd string) bool {
 }
 
 // Execute runs a command thru execution
+//
 //gocyclo:ignore
 func (c *Command) Execute(client Client, cmdLine *CommandArgs) error {
 
@@ -620,7 +621,7 @@ func (c *Command) Execute(client Client, cmdLine *CommandArgs) error {
 				if cmd.Exec == nil {
 					cmd.Help(client)
 				} else if cmd.CanExecute(client) {
-					execErr := cmd.Exec(client, cmdLine)
+					execErr := cmd.Exec(client, cmd, cmdLine)
 					return execErr
 				} else {
 					cmd.NotAuthorized(client)
@@ -637,7 +638,7 @@ func (c *Command) Execute(client Client, cmdLine *CommandArgs) error {
 				if cmd.Exec == nil {
 					cmd.Help(client)
 				} else if cmd.CanExecute(client) {
-					execErr := cmd.Exec(client, cmdLine)
+					execErr := cmd.Exec(client, cmd, cmdLine)
 					return execErr
 				} else {
 					cmd.NotAuthorized(client)
