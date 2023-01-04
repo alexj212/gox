@@ -207,9 +207,7 @@ func NewSshService(port int, hostKey gossh.Signer, decorators ...ClientDecorator
 		decorator(svc)
 	}
 
-	log.Printf("starting ssh server on port %s...\n", server.Addr)
-	log.Printf("connections will only last %s\n", server.MaxTimeout)
-	log.Printf("and timeout after %s of no activity\n", server.IdleTimeout)
+	log.Printf("starting ssh server on port %s -  inactivity timeout: %s\n", server.Addr, server.IdleTimeout)
 
 	return svc, nil
 }
