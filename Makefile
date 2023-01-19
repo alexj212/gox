@@ -7,7 +7,7 @@ export LATEST_COMMIT := $(shell git log --pretty=format:'%h' -n 1)
 export BRANCH := $(shell git branch |grep -v "no branch"| grep \*|cut -d ' ' -f2)
 export BUILT_ON_IP := $(shell [ $$(uname) = Linux ] && hostname -i || hostname )
 export BIN_DIR=./bin
-export LIB_VERSION=v0.1.7
+export LIB_VERSION=v0.1.8
 
 export BUILT_ON_OS=$(shell uname -a)
 ifeq ($(BRANCH),)
