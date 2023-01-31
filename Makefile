@@ -7,7 +7,15 @@ export LATEST_COMMIT := $(shell git log --pretty=format:'%h' -n 1)
 export BRANCH := $(shell git branch |grep -v "no branch"| grep \*|cut -d ' ' -f2)
 export BUILT_ON_IP := $(shell [ $$(uname) = Linux ] && hostname -i || hostname )
 export BIN_DIR=./bin
-export LIB_VERSION=v0.1.8
+export VERSION_FILE   := version.txt
+export TAG     := $(shell [ -f "$(VERSION_FILE)" ] && cat "$(VERSION_FILE)" || echo '0.5.46')
+export VERMAJMIN      := $(subst ., ,$(TAG))
+export VERSION        := $(word 1,$(VERMAJMIN))
+export MAJOR          := $(word 2,$(VERMAJMIN))
+export MINOR          := $(word 3,$(VERMAJMIN))
+export NEW_MINOR      := $(shell expr "$(MINOR)" + 1)
+export NEW_TAG := $(VERSION).$(MAJOR).$(NEW_MINOR)
+
 
 export BUILT_ON_OS=$(shell uname -a)
 ifeq ($(BRANCH),)
@@ -37,6 +45,14 @@ build_info: check_prereq ## Build the container
 	@echo 'BUILD_NUMBER      $(BUILD_NUMBER)'
 	@echo 'COMPILE_LDFLAGS   $(COMPILE_LDFLAGS)'
 	@echo 'PATH              $(PATH)'
+	@echo 'VERSION_FILE     $(VERSION_FILE)'
+	@echo 'TAG              $(TAG)'
+	@echo 'VERMAJMIN        $(VERMAJMIN)'
+	@echo 'VERSION          $(VERSION)'
+	@echo 'MAJOR            $(MAJOR)'
+	@echo 'MINOR            $(MINOR)'
+	@echo 'NEW_MINOR        $(NEW_MINOR)'
+	@echo 'NEW_TAG          $(NEW_TAG)'
 	@echo '---------------------------------------------------------'
 	@echo ''
 
@@ -198,13 +214,18 @@ clean_proxy: ## clean proxy
 
 
 
-publish:
+publish: ## tag & push to gitlab
+	@echo "\n\n\n\n\n\nRunning git add\n"
+	echo "$(NEW_TAG)" > "$(VERSION_FILE)"
 	git add -A
-	git commit -m "latest version: $(LIB_VERSION)"
-	git tag  "$(LIB_VERSION)"
-	git push origin "$(LIB_VERSION)"
-	git push
+	@echo "\n\n\n\n\n\nRunning git commit\n"
+	git commit -m "latest version: v$(NEW_TAG)"
 
+	@echo "\n\n\n\n\n\nRunning git tag\n"
+	git tag  "v$(NEW_TAG)"
 
+	@echo "\n\n\n\n\n\nRunning git push\n"
+	git push -f origin "v$(NEW_TAG)"
 
+	git push -f
 
