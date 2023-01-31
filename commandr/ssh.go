@@ -114,6 +114,10 @@ func (svc *sshService) sshSessionHandler(s ssh.Session) {
 		term.AddHistory(v)
 	}
 
+	if len(svc.banner) > 0 {
+		term.Write([]byte(svc.banner))
+	}
+
 	for {
 		line, err := term.ReadLine()
 		if err != nil {
@@ -161,6 +165,7 @@ type sshService struct {
 	users           map[string]*sshUser
 	preExecHandler  PreExecHandler
 	postExecHandler PostExecHandler
+	banner          string
 }
 
 // SetPreExecHandler - set pre exec handler
@@ -231,6 +236,8 @@ type SshService interface {
 	LookupUser(username string) (user *sshUser, ok bool)
 	// AddCommand add commands to be executed
 	AddCommand(cmds ...*Command)
+	Banner() string
+	SetBanner(s string)
 }
 
 // Close shut down ssh service
@@ -272,4 +279,10 @@ func (svc *sshService) RegisterUser(user string, level ExecLevel, keys []*gox.Ss
 // AddCommand add commands to be executed
 func (svc *sshService) AddCommand(cmds ...*Command) {
 	DefaultCommands.AddCommand(cmds...)
+}
+func (svc *sshService) Banner() string {
+	return svc.banner
+}
+func (svc *sshService) SetBanner(s string) {
+	svc.banner = s
 }
