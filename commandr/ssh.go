@@ -113,9 +113,9 @@ func (svc *sshService) sshSessionHandler(s ssh.Session) {
 	for _, v := range user.history {
 		term.AddHistory(v)
 	}
-
-	if len(svc.banner) > 0 {
-		term.Write([]byte(svc.banner))
+	
+	for _, cb := range svc.clientConnHandler {
+		cb(svc, c)
 	}
 
 	for {
@@ -158,6 +158,7 @@ type ClientDecorator func(*sshService)
 
 type PreExecHandler func(SshService, SshClient, string) error
 type PostExecHandler func(SshService, SshClient, string, error)
+type ClientConnectedHandler func(SshService, SshClient)
 
 type sshService struct {
 	s               *ssh.Server
@@ -165,7 +166,7 @@ type sshService struct {
 	users           map[string]*sshUser
 	preExecHandler  PreExecHandler
 	postExecHandler PostExecHandler
-	banner          string
+	clientConnHandler  []ClientConnectedHandler
 }
 
 // SetPreExecHandler - set pre exec handler
@@ -213,6 +214,7 @@ func NewSshService(port int, hostKey gossh.Signer, decorators ...ClientDecorator
 	}
 
 	log.Printf("starting ssh server on port %s -  inactivity timeout: %s\n", server.Addr, server.IdleTimeout)
+	svc.clientConnHandler = make([]ClientConnectedHandler, 0)
 
 	return svc, nil
 }
@@ -236,8 +238,8 @@ type SshService interface {
 	LookupUser(username string) (user *sshUser, ok bool)
 	// AddCommand add commands to be executed
 	AddCommand(cmds ...*Command)
-	Banner() string
-	SetBanner(s string)
+	//ConnectionHandler sets callback for when client connects
+	ConnectionHandler( sessCB ClientConnectedHandler)
 }
 
 // Close shut down ssh service
@@ -248,6 +250,11 @@ func (svc *sshService) Close() error {
 // Spawn start new go routine serving ssh
 func (svc *sshService) Spawn() {
 	go svc.s.Serve(svc.ln)
+}
+
+//ConnectionHandler sets callback for when client connects
+func (svc *sshService) ConnectionHandler(sessCB ClientConnectedHandler) {
+	svc.clientConnHandler = append(svc.clientConnHandler,sessCB)
 }
 
 // LookupUser lookup a user by name
@@ -280,9 +287,7 @@ func (svc *sshService) RegisterUser(user string, level ExecLevel, keys []*gox.Ss
 func (svc *sshService) AddCommand(cmds ...*Command) {
 	DefaultCommands.AddCommand(cmds...)
 }
-func (svc *sshService) Banner() string {
-	return svc.banner
-}
-func (svc *sshService) SetBanner(s string) {
-	svc.banner = s
+
+func (svc *sshService) ClientConnHandler(s ClientConnectedHandler) {
+	svc.clientConnHandler = append(svc.clientConnHandler,s)
 }
