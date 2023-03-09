@@ -113,7 +113,7 @@ func (svc *sshService) sshSessionHandler(s ssh.Session) {
 	for _, v := range user.history {
 		term.AddHistory(v)
 	}
-	
+
 	for _, cb := range svc.clientConnHandler {
 		cb(svc, c)
 	}
@@ -142,7 +142,7 @@ func (svc *sshService) sshSessionHandler(s ssh.Session) {
 
 		execErr := DefaultCommands.Execute(c, parsed)
 		if svc.postExecHandler != nil {
-			svc.postExecHandler(svc, c, line, execErr)
+			execErr = svc.postExecHandler(svc, c, line)
 		}
 
 		if execErr != nil {
@@ -157,16 +157,16 @@ func (svc *sshService) sshSessionHandler(s ssh.Session) {
 type ClientDecorator func(*sshService)
 
 type PreExecHandler func(SshService, SshClient, string) error
-type PostExecHandler func(SshService, SshClient, string, error)
+type PostExecHandler func(SshService, SshClient, string) error
 type ClientConnectedHandler func(SshService, SshClient)
 
 type sshService struct {
-	s               *ssh.Server
-	ln              net.Listener
-	users           map[string]*sshUser
-	preExecHandler  PreExecHandler
-	postExecHandler PostExecHandler
-	clientConnHandler  []ClientConnectedHandler
+	s                 *ssh.Server
+	ln                net.Listener
+	users             map[string]*sshUser
+	preExecHandler    PreExecHandler
+	postExecHandler   PostExecHandler
+	clientConnHandler []ClientConnectedHandler
 }
 
 // SetPreExecHandler - set pre exec handler
@@ -239,7 +239,7 @@ type SshService interface {
 	// AddCommand add commands to be executed
 	AddCommand(cmds ...*Command)
 	//ConnectionHandler sets callback for when client connects
-	ConnectionHandler( sessCB ClientConnectedHandler)
+	ConnectionHandler(sessCB ClientConnectedHandler)
 }
 
 // Close shut down ssh service
@@ -252,9 +252,9 @@ func (svc *sshService) Spawn() {
 	go svc.s.Serve(svc.ln)
 }
 
-//ConnectionHandler sets callback for when client connects
+// ConnectionHandler sets callback for when client connects
 func (svc *sshService) ConnectionHandler(sessCB ClientConnectedHandler) {
-	svc.clientConnHandler = append(svc.clientConnHandler,sessCB)
+	svc.clientConnHandler = append(svc.clientConnHandler, sessCB)
 }
 
 // LookupUser lookup a user by name
@@ -289,5 +289,5 @@ func (svc *sshService) AddCommand(cmds ...*Command) {
 }
 
 func (svc *sshService) ClientConnHandler(s ClientConnectedHandler) {
-	svc.clientConnHandler = append(svc.clientConnHandler,s)
+	svc.clientConnHandler = append(svc.clientConnHandler, s)
 }
