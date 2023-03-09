@@ -1,6 +1,6 @@
 module github.com/alexj212/gox
 
-go 1.18
+go 1.20
 
 require (
 	github.com/MichaelMure/go-term-markdown v0.1.4
