@@ -2,7 +2,6 @@ package utilx
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/alexj212/gox"
 	"io"
 	"os"
@@ -85,7 +84,6 @@ func LoadJson[T any](f string, v *T) (*T, error) {
 			return nil, err
 		}
 
-		fmt.Printf("json: [%s]", string(d))
 		err = json.Unmarshal(d, v)
 		if err != nil {
 			return nil, err
