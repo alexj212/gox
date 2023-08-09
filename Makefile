@@ -229,3 +229,11 @@ publish: ## tag & push to gitlab
 
 	git push -f
 
+
+
+
+upgrade:
+	go get -u gitlab.paltalk.com/go/utils/netutils
+	go get -u gitlab.paltalk.com/go/paltalk/palutils
+	go get -u ./...
+	go mod tidy
