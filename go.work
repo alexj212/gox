@@ -1,4 +1,6 @@
-go 1.18
+go 1.21
+
+toolchain go1.21.0
 
 use (
 	.
@@ -6,4 +8,3 @@ use (
 	./_examples/events
 	./_examples/proxy
 )
-
