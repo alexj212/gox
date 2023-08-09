@@ -1,6 +1,6 @@
 module github.com/alexj212/gox
 
-go 1.21
+go 1.20
 
 require (
 	github.com/MichaelMure/go-term-markdown v0.1.4
@@ -40,6 +40,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/potakhov/cache v0.0.1 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/image v0.0.0-20220413100746-70e8d0d3baa9 // indirect

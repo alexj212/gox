@@ -8,8 +8,8 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"github.com/potakhov/loge"
 	"io/ioutil"
-	"log"
 	"path/filepath"
 	"sort"
 )
@@ -60,7 +60,7 @@ func LoadCertificateDirectory(dir string) ([]tls.Certificate, error) {
 	for _, file := range certficateFiles {
 		cert, err := LoadCertficateAndKeyFromFile(file)
 		if err != nil {
-			log.Printf("common(tls): %s", err)
+			loge.Info("common(tls): %s", err)
 		} else {
 			certs = append(certs, *cert)
 		}

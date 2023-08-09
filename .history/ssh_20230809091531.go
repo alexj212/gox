@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/potakhov/loge"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -82,7 +83,7 @@ func GeneratePrivateKey(bitSize int) (*rsa.PrivateKey, error) {
 		return nil, err
 	}
 
-	log.Println("Private Key generated")
+	loge.Println("Private Key generated")
 	return privateKey, nil
 }
 

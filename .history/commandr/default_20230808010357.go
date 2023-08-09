@@ -12,7 +12,7 @@ import (
 func HandleCommands(Commands *Command) (handler func(io.Writer, string)) {
 
 	handler = func(client io.Writer, cmdLine string) {
-		// log.Printf("handleMessage  - authenticated user message.Payload: [" + cmd+"]")
+		// loge.Info("handleMessage  - authenticated user message.Payload: [" + cmd+"]")
 
 		var b bytes.Buffer
 		writer := bufio.NewWriter(&b)

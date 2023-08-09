@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	
 	"golang.org/x/crypto/ssh"
 )
 
@@ -82,7 +83,7 @@ func GeneratePrivateKey(bitSize int) (*rsa.PrivateKey, error) {
 		return nil, err
 	}
 
-	log.Println("Private Key generated")
+	loge.Println("Private Key generated")
 	return privateKey, nil
 }
 
@@ -114,7 +115,7 @@ func GeneratePublicKey(privatekey *rsa.PublicKey) ([]byte, error) {
 
 	pubKeyBytes := ssh.MarshalAuthorizedKey(publicRsaKey)
 
-	log.Println("Public key generated")
+	loge.Println("Public key generated")
 	return pubKeyBytes, nil
 }
 

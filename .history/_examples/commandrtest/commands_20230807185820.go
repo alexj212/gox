@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"os"
 	"strings"
 	"time"
 
@@ -26,26 +24,26 @@ var LinesCommand = &commandr.Command{Use: "lines", Exec: linesCmd, Short: "lines
 
 var AdminLevelCommand = &commandr.Command{Use: "admintest", Exec: adminLevelCmd, Short: "admintest", ExecLevel: commandr.Admin}
 
-func debugCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func debugCmd(client commandr.Client, args *commandr.CommandArgs) (err error) {
 	client.Write([]byte(color.GreenString("args.CmdLine: %v\n", args.CmdLine)))
 	client.Write([]byte(color.GreenString("args.Args: %v\n", strings.Join(args.Args, " | "))))
 	client.Write([]byte(color.GreenString("args.PealOff: %v\n", args.PealOff(1))))
 	client.Write([]byte(color.GreenString("args.Debug: %v\n", args.Debug())))
 	return
 }
-func echoCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func echoCmd(client commandr.Client, args *commandr.CommandArgs) (err error) {
 	//text := args.PealOff(0)
 	client.Write([]byte(color.GreenString("%v\n", args.PealOff(0))))
 	return
 }
 
-func exitCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func exitCmd(client commandr.Client, args *commandr.CommandArgs) (err error) {
 	client.Write([]byte(color.GreenString("Bye bye 👋\n")))
-	os.Exit(1)
+	client.Close()
 	return
 }
 
-func tldrCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func tldrCmd(client commandr.Client, args *commandr.CommandArgs) (err error) {
 	err = args.Parse()
 	if err != nil {
 		return err
@@ -95,14 +93,14 @@ func tldrCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs
 	return
 }
 
-func adminLevelCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func adminLevelCmd(client commandr.Client, args *commandr.CommandArgs) (err error) {
 	//text := args.PealOff(0)
 	client.Write([]byte(color.GreenString("admintest\n")))
 
 	return
 }
 
-func linesCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func linesCmd(client commandr.Client, args *commandr.CommandArgs) (err error) {
 
 	cnt := args.FlagSet.Int("cnt", 5, "number of lines to print")
 	err = args.Parse()

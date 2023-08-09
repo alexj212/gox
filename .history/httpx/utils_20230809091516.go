@@ -7,10 +7,9 @@ import (
 	"net/http"
 	"strings"
 
-	"log"
-
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/potakhov/loge"
 )
 
 // HttpNocacheContent will set the headers for content type along with no caching.

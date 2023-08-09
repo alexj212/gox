@@ -7,8 +7,7 @@ package gox
 import (
 	"embed"
 	"fmt"
-	"log"
-
+	"github.com/potakhov/loge"
 	"io"
 	"io/fs"
 	"net/http"
@@ -24,7 +23,7 @@ func SetupFS(defaultFS fs.FS, webDir string, compareFS bool) (fs.FS, error) {
 	if webDir != "" {
 		fi, err := os.Stat(webDir)
 		if err != nil {
-			log.Printf("unable to serve web assets from %s dir %v\n", webDir, err)
+			loge.Info("unable to serve web assets from %s dir %v\n", webDir, err)
 		}
 
 		if err == nil && fi.IsDir() {
@@ -42,16 +41,16 @@ func SetupFS(defaultFS fs.FS, webDir string, compareFS bool) (fs.FS, error) {
 					}
 				}
 				root = file
-				log.Printf("using file serving from local disk: %v\n", file)
+				loge.Info("using file serving from local disk: %v\n", file)
 				_ = WalkDir(file, "local")
 			}
 		} else {
-			log.Printf("unable to serve web assets from local dir %v\n", webDir)
+			loge.Info("unable to serve web assets from local dir %v\n", webDir)
 		}
 	}
 
 	if root == nil {
-		log.Printf("using file serving from embedded resources \n")
+		loge.Info("using file serving from embedded resources \n")
 		root = defaultFS
 		_ = WalkDir(defaultFS, "default")
 	}

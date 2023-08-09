@@ -7,10 +7,9 @@ import (
 	"net/http"
 	"strings"
 
-	"log"
-
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	"github.com/potakhov/loge"
 )
 
 // HttpNocacheContent will set the headers for content type along with no caching.
@@ -31,7 +30,7 @@ func InternalServerError(w http.ResponseWriter, r *http.Request, err error) {
 	w.Header().Set("Cache-Control", "no-cache, no-store")
 	w.Header().Set("Pragma", "no-cache")
 	w.Header().Set("Expires", "0")
-	log.Printf("Internal server error %s: %s", mux.CurrentRoute(r).GetName(), err.Error())
+	loge.Error("Internal server error %s: %s", mux.CurrentRoute(r).GetName(), err.Error())
 	http.Error(w, "Internal server error", 500)
 }
 
@@ -39,14 +38,14 @@ func InternalServerError(w http.ResponseWriter, r *http.Request, err error) {
 func SendJson(w http.ResponseWriter, r *http.Request, val interface{}) {
 	bytes, err := json.Marshal(val)
 	if err != nil {
-		log.Printf("Send json error: %v\n", err)
+		loge.Error("Send json error: %v\n", err)
 		InternalServerError(w, r, err)
 		return
 	}
 	HttpNocacheContent(w, "text/json")
 	_, err = w.Write(bytes)
 	if err != nil {
-		log.Printf("error calling w.Write() error: %v\n", err)
+		loge.Error("error calling w.Write() error: %v\n", err)
 	}
 }
 
@@ -55,7 +54,7 @@ func SendText(w http.ResponseWriter, r *http.Request, val string) {
 	HttpNocacheContent(w, "text/plain")
 	_, err := w.Write([]byte(val))
 	if err != nil {
-		log.Printf("error calling w.Write() error: %v\n", err)
+		loge.Error("error calling w.Write() error: %v\n", err)
 	}
 }
 

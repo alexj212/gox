@@ -41,7 +41,7 @@ func echoCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs
 
 func exitCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
 	client.Write([]byte(color.GreenString("Bye bye 👋\n")))
-	os.Exit(1)
+	os.Exit(code)1
 	return
 }
 

@@ -4,35 +4,16 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"github.com/alexj212/gox/utilx"
-	"github.com/go-errors/errors"
 	"io"
 	"sort"
 	"strings"
+
+	"github.com/alexj212/gox/utilx"
+	"github.com/go-errors/errors"
 )
 
-// Client interface of clients
-type Client interface {
-	io.Writer
-
-	//Close interface func implementation to close client down
-	Close()
-
-	//ExecLevel interface func implementation to return client exec level
-	ExecLevel() ExecLevel
-
-	//History interface func implementation to return client command history
-	History() []string
-
-	//UserName interface func implementation to return client user name
-	UserName() string
-
-	//WriteString interface func implementation to write string to clients stream
-	WriteString(p string)
-}
-
 // CommandFunc function definition for a command
-type CommandFunc func(client Client, cmd *Command, args *CommandArgs) error
+type CommandFunc func(client io.Writer, cmd *Command, args *CommandArgs) error
 
 // ExecLevel type for admin levels
 type ExecLevel int32
@@ -108,7 +89,7 @@ type Command struct {
 	// helpTemplate is help template defined by user.
 	helpTemplate string
 	// helpFunc is help func defined by user.
-	helpFunc func(*Command, []string, Client)
+	helpFunc func(*Command, []string, io.Writer)
 	// helpCommand is command with usage 'help'. If it's not defined by user,
 	// cobra uses default help command.
 	helpCommand *Command
@@ -144,7 +125,7 @@ type Command struct {
 }
 
 // SetHelpFunc sets help function. Can be defined by Application.
-func (c *Command) SetHelpFunc(f func(*Command, []string, Client)) {
+func (c *Command) SetHelpFunc(f func(*Command, []string, io.Writer)) {
 	c.helpFunc = f
 }
 
@@ -302,14 +283,14 @@ func (c *Command) Usage(io io.Writer) error {
 
 // HelpFunc returns either the function set by SetHelpFunc for this command
 // or a parent, or it returns a function with default help behavior.
-func (c *Command) HelpFunc() func(*Command, []string, Client) {
+func (c *Command) HelpFunc() func(*Command, []string, io.Writer) {
 	if c.helpFunc != nil {
 		return c.helpFunc
 	}
 	if c.HasParent() {
 		return c.Parent().HelpFunc()
 	}
-	return func(c *Command, a []string, client Client) {
+	return func(c *Command, a []string, client io.Writer) {
 
 		err := utilx.Tmpl(client, c.HelpTemplate(), c)
 		if err != nil {
@@ -321,7 +302,7 @@ func (c *Command) HelpFunc() func(*Command, []string, Client) {
 // Help puts out the help for the command.
 // Used when a user calls help [command].
 // Can be defined by user by overriding HelpFunc.
-func (c *Command) Help(client Client) error {
+func (c *Command) Help(client io.Writer) error {
 	c.HelpFunc()(c, []string{}, client)
 	return nil
 }
@@ -553,7 +534,7 @@ func (c *Command) CommandPath() string {
 }
 
 // IsSubCommandAvailable checks if sub command exists
-func (c *Command) IsSubCommandAvailable(client Client, cmd string) bool {
+func (c *Command) IsSubCommandAvailable(client io.Writer, cmd string) bool {
 
 	if cmd == "help" {
 		return true
@@ -562,9 +543,9 @@ func (c *Command) IsSubCommandAvailable(client Client, cmd string) bool {
 	for _, command := range c.commands {
 		if cmd == command.Use && command.Exec != nil {
 
-			if client.ExecLevel() >= command.ExecLevel {
-				return true
-			}
+			// if client.ExecLevel() >= command.ExecLevel {
+			// 	return true
+			// }
 			return false
 		}
 	}
@@ -574,7 +555,7 @@ func (c *Command) IsSubCommandAvailable(client Client, cmd string) bool {
 // Execute runs a command thru execution
 //
 //gocyclo:ignore
-func (c *Command) Execute(client Client, cmdLine *CommandArgs) error {
+func (c *Command) Execute(client io.Writer, cmdLine *CommandArgs) error {
 
 	if cmdLine.CmdName == "help" {
 
@@ -620,11 +601,6 @@ func (c *Command) Execute(client Client, cmdLine *CommandArgs) error {
 
 				if cmd.Exec == nil {
 					cmd.Help(client)
-				} else if cmd.CanExecute(client) {
-					execErr := cmd.Exec(client, cmd, cmdLine)
-					return execErr
-				} else {
-					cmd.NotAuthorized(client)
 				}
 
 				return nil
@@ -637,11 +613,9 @@ func (c *Command) Execute(client Client, cmdLine *CommandArgs) error {
 
 				if cmd.Exec == nil {
 					cmd.Help(client)
-				} else if cmd.CanExecute(client) {
+				} else {
 					execErr := cmd.Exec(client, cmd, cmdLine)
 					return execErr
-				} else {
-					cmd.NotAuthorized(client)
 				}
 			}
 
@@ -656,15 +630,4 @@ func (c *Command) Execute(client Client, cmdLine *CommandArgs) error {
 		client.Write([]byte(val))
 	}
 	return nil
-}
-
-// CanExecute determine if a client can execute a command
-func (c *Command) CanExecute(client Client) bool {
-
-	return c.Exec != nil && client.ExecLevel() >= c.ExecLevel
-}
-
-// NotAuthorized return to client a message that the command is not authorized
-func (c *Command) NotAuthorized(client Client) {
-	client.Write([]byte(fmt.Sprintf("user %s exec level: %s is not authorized to execute %s level needed: %s\n\n", client.UserName(), client.ExecLevel(), c.Name(), c.ExecLevel)))
 }

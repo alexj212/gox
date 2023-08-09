@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"time"
 
@@ -33,19 +32,19 @@ func debugCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArg
 	client.Write([]byte(color.GreenString("args.Debug: %v\n", args.Debug())))
 	return
 }
-func echoCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func echoCmd(client io.Writer, cmd *Command, args *commandr.CommandArgs) (err error) {
 	//text := args.PealOff(0)
 	client.Write([]byte(color.GreenString("%v\n", args.PealOff(0))))
 	return
 }
 
-func exitCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func exitCmd(client io.Writer, cmd *Command, args *commandr.CommandArgs) (err error) {
 	client.Write([]byte(color.GreenString("Bye bye 👋\n")))
-	os.Exit(1)
+	client.Close()
 	return
 }
 
-func tldrCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func tldrCmd(client io.Writer, cmd *Command, args *commandr.CommandArgs) (err error) {
 	err = args.Parse()
 	if err != nil {
 		return err

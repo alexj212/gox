@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"time"
 
@@ -41,11 +40,11 @@ func echoCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs
 
 func exitCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
 	client.Write([]byte(color.GreenString("Bye bye 👋\n")))
-	os.Exit(1)
+	client.Close()
 	return
 }
 
-func tldrCmd(client io.Writer, cmd *commandr.Command, args *commandr.CommandArgs) (err error) {
+func tldrCmd(client io.Writer, cmd *Command, args *commandr.CommandArgs) (err error) {
 	err = args.Parse()
 	if err != nil {
 		return err

@@ -1,7 +1,7 @@
 package utilx
 
 import (
-	"log"
+	"github.com/potakhov/loge"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,12 +9,12 @@ import (
 
 // LoopForever on signal processing
 func LoopForever(onShutdownFunc func(os.Signal)) {
-	log.Printf("Entering infinite loop\n")
+	loge.Info("Entering infinite loop\n")
 
-	signal.Notify(osSignal, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
+	signal.Notify(osSignal, syscall.SIGINT, syscall.SIGTERM)
 	sig := <-osSignal
 
-	log.Printf("Exiting infinite loop received OsSignal\n")
+	loge.Info("Exiting infinite loop received OsSignal\n")
 
 	if onShutdownFunc != nil {
 		onShutdownFunc = DefaultShutdown
