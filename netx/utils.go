@@ -2,9 +2,12 @@ package netx
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
+	"io"
 	"net"
+	"net/http"
 	"os"
+
+	"github.com/pkg/errors"
 )
 
 // GetFreePort asks the kernel for a free open port that is ready to use.
@@ -72,8 +75,31 @@ func GetRandomFreePort() (int, error) {
 	return l.Addr().(*net.TCPAddr).Port, nil
 }
 
+func fetchIp(url string) (string, error) {
+	var client http.Client
+	resp, err := client.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return "", err
+		}
+		return string(bodyBytes), nil
+	}
+	return "", fmt.Errorf("error fetching ip: %s", resp.Status)
+}
+
 // GetLocalIP returns the non loopback local IP of the host
 func GetLocalIP() string {
+	resp, err := fetchIp("http://169.254.169.254/latest/meta-data/local-ipv4")
+	if err == nil {
+		return resp
+	}
+
 	addrs, err := net.InterfaceAddrs()
 	if err != nil {
 		return ""
