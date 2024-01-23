@@ -190,22 +190,23 @@ func GetAppStorageFileName() (appStorageFileName string) {
 }
 
 // LoadAppStorage read AppKey file to rsa.PrivateKey.
-func LoadAppStorage[T any](empty *T) (*T, error) {
+func LoadAppStorage[T any](empty *T) (*T, bool, error) {
 	appStorageFileName := GetAppStorageFileName()
 	exists := FileExists(appStorageFileName)
-	if exists {
-		f, err := ioutil.ReadFile(appStorageFileName)
-		if err != nil {
-			return nil, err
-		}
-
-		err = json.Unmarshal(f, empty)
-		if err != nil {
-			return nil, err
-		}
+	if !exists {
+		return empty, false, nil
 	}
 
-	return empty, nil
+	f, err := ioutil.ReadFile(appStorageFileName)
+	if err != nil {
+		return nil, false, err
+	}
+
+	err = json.Unmarshal(f, empty)
+	if err != nil {
+		return nil, false, err
+	}
+	return empty, true, nil
 }
 
 // SaveAppStorage read AppKey file to rsa.PrivateKey.
