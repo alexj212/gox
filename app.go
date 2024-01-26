@@ -98,7 +98,6 @@ func appendHistory() {
 
 	history := string(historyBytes)
 	if strings.Contains(history, fullCmdLine) {
-		log.Printf("cmd line: %s already in history file\n", fullCmdLine)
 		return
 	}
 
