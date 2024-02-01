@@ -141,3 +141,24 @@ func GetClientIp() string {
 func GetHostIp() string {
 	return os.Getenv("HOST_IP")
 }
+
+func GetIP() string {
+	resp, err := fetchIp("http://169.254.169.254/latest/meta-data/local-ipv4")
+	if err == nil {
+		return resp
+	}
+
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return ""
+	}
+	for _, address := range addrs {
+		// check the address type and if it is not a loopback the display it
+		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+			if ipnet.IP.To4() != nil {
+				return ipnet.IP.String()
+			}
+		}
+	}
+	return ""
+}
