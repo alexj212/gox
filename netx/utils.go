@@ -95,24 +95,7 @@ func fetchIp(url string) (string, error) {
 
 // GetLocalIP returns the non loopback local IP of the host
 func GetLocalIP() string {
-	resp, err := fetchIp("http://169.254.169.254/latest/meta-data/local-ipv4")
-	if err == nil {
-		return resp
-	}
-
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return ""
-	}
-	for _, address := range addrs {
-		// check the address type and if it is not a loopback the display it
-		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ipnet.IP.To4() != nil {
-				return ipnet.IP.String()
-			}
-		}
-	}
-	return ""
+	return GetIP()
 }
 
 // GetOutboundIP Get preferred outbound ip of this machine
@@ -129,17 +112,53 @@ func GetOutboundIP() (string, error) {
 
 // GetManagementIp return env value for MANAGEMENT_IP
 func GetManagementIp() string {
-	return os.Getenv("MANAGEMENT_IP")
+	ip := os.Getenv("MANAGEMENT_IP")
+
+	if ip == "" {
+		ip = os.Getenv("CLIENT_IP")
+	}
+	if ip == "" {
+		ip = os.Getenv("HOST_IP")
+	}
+	if ip == "" {
+		ip = GetIP()
+	}
+
+	return ip
 }
 
 // GetClientIp return env value for CLIENT_IP
 func GetClientIp() string {
-	return os.Getenv("CLIENT_IP")
+	ip := os.Getenv("CLIENT_IP")
+
+	if ip == "" {
+		ip = os.Getenv("MANAGEMENT_IP")
+	}
+	if ip == "" {
+		ip = os.Getenv("HOST_IP")
+	}
+	if ip == "" {
+		ip = GetIP()
+	}
+
+	return ip
 }
 
 // GetHostIp return env value for HOST_IP
 func GetHostIp() string {
-	return os.Getenv("HOST_IP")
+	ip := os.Getenv("HOST_IP")
+
+	if ip == "" {
+		ip = os.Getenv("MANAGEMENT_IP")
+	}
+	if ip == "" {
+		ip = os.Getenv("CLIENT_IP")
+	}
+	if ip == "" {
+		ip = GetIP()
+	}
+
+	return ip
 }
 
 func GetIP() string {
