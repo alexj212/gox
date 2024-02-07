@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -76,7 +77,10 @@ func GetRandomFreePort() (int, error) {
 }
 
 func fetchIp(url string) (string, error) {
-	var client http.Client
+	client := http.Client{
+		Timeout: time.Second * 1,
+	}
+
 	resp, err := client.Get(url)
 	if err != nil {
 		return "", err
