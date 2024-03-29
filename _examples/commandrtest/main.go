@@ -37,7 +37,7 @@ func main() {
 		fmt.Printf("Unable create hostKey: %v\n", err)
 		os.Exit(1)
 	}
-	svc, err := commandr.NewSshService(2022, hostKey)
+	svc, err := commandr.NewCommandArgs(2022, hostKey)
 	if err != nil {
 		fmt.Printf("Unable to launch ssh server: %v\n", err)
 		os.Exit(1)

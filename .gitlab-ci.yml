@@ -1,0 +1,53 @@
+image: golang:latest
+##
+##
+## gitlab-runner exec docker build_job --env "GITLAB_KEY=${GITLAB_KEY}"  --env "GOPRIVATE=gitlab.paltalk.com/go/*"
+##
+##
+variables:
+  GIT_SSH_COMMAND: "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+  GOPRIVATE: "gitlab.paltalk.com/go/*"
+
+
+stages:
+  - build
+
+build_job:
+  stage: build
+  script:
+    - echo "${GITLAB_KEY}"
+    - echo "${GOPRIVATE}"
+    - eval "$(ssh-agent -s)"
+    - ssh-add <(echo "${GITLAB_KEY}" | base64 -d)
+    - ssh  -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -T git@gitlab.paltalk.com
+    - make gitlab
+    - find ./build -type f
+  artifacts:
+    expire_in: 1 day # Or any suitable duration
+    paths:
+      - build/
+  only:
+    - tags
+    - master
+  tags:
+    - node8
+
+release_job:
+  stage: build
+  script:
+    - echo "${GITLAB_KEY}"
+    - echo "${GOPRIVATE}"
+    - eval "$(ssh-agent -s)"
+    - ssh-add <(echo "${GITLAB_KEY}" | base64 -d)
+    - ssh  -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -T git@gitlab.paltalk.com
+    - make gitlab
+    - find ./build -type f
+  artifacts:
+    name: "build-${CI_COMMIT_TAG}"
+    expire_in: never
+    paths:
+      - build/
+  only:
+    - tags
+  tags:
+    - node8
