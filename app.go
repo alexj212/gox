@@ -189,14 +189,14 @@ func GetAppStorageFileName() (appStorageFileName string) {
 }
 
 // LoadAppStorage read AppKey file to rsa.PrivateKey.
-func LoadAppStorage[T any](empty *T) (*T, bool, error) {
-	appStorageFileName := GetAppStorageFileName()
-	exists := FileExists(appStorageFileName)
+func LoadAppStorage[T any](filename string, empty *T) (*T, bool, error) {
+
+	exists := FileExists(filename)
 	if !exists {
 		return empty, false, nil
 	}
 
-	f, err := ioutil.ReadFile(appStorageFileName)
+	f, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, false, err
 	}
@@ -209,13 +209,12 @@ func LoadAppStorage[T any](empty *T) (*T, bool, error) {
 }
 
 // SaveAppStorage read AppKey file to rsa.PrivateKey.
-func SaveAppStorage[T any](empty *T) error {
-	appStorageFileName := GetAppStorageFileName()
+func SaveAppStorage[T any](filename string, val *T) error {
 
-	payload, err := json.MarshalIndent(empty, "", "    ")
+	payload, err := json.MarshalIndent(val, "", "    ")
 	if err != nil {
 		return err
 	}
 
-	return ioutil.WriteFile(appStorageFileName, payload, 0644)
+	return ioutil.WriteFile(filename, payload, 0644)
 }

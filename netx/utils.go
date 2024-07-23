@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+"strings"
 
 	"github.com/pkg/errors"
 )
@@ -179,7 +180,12 @@ func GetIP() string {
 		// check the address type and if it is not a loopback the display it
 		if ipnet, ok := address.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 			if ipnet.IP.To4() != nil {
-				return ipnet.IP.String()
+				strIp:= ipnet.IP.String()
+
+				if strings.Contains(strIp, "169.") {
+					continue
+				}
+				return strIp
 			}
 		}
 	}
